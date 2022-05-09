@@ -1,0 +1,27 @@
+# Maintainer: Yongha Hwang <mshrimp@sogang.ac.kr>
+
+pkgname=libahocorasick
+pkgver=2.0.0
+pkgrel=1
+pkgdesc=""
+arch=(i686 x86_64)
+url=
+license=(LGPL)
+groups=()
+depends=()
+makedepends=(git)
+provides=(${pkgname}=${pkgver})
+conflicts=()
+source=($pkgname::git+https://github.com/MShrimp4/${pkgname}.git)
+sha256sums=('SKIP')
+
+build() {
+    cd $pkgname/ahocorasick
+    make
+}
+
+package() {
+    cd $pkgname/ahocorasick
+    make DESTDIR="$pkgdir/" install
+}
+

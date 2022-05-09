@@ -1,0 +1,31 @@
+# Maintainer: Yongha Hwang <mshrimp@sogang.ac.kr>
+
+pkgname=mecab-ko-dic
+pkgver=2.1.1_20180720
+pkgrel=1
+pkgdesc="Korean dictionary fork mecab-ko."
+arch=(i686 x86_64)
+url=https://bitbucket.org/eunjeon/${pkgname}/src/master/
+license=(BSD)
+groups=()
+depends=()
+makedepends=(git)
+provides=(${pkgname}=${pkgver/_/-})
+conflicts=()
+source=(https://bitbucket.org/eunjeon/mecab-ko-dic/downloads/${pkgname}-${pkgver/_/-}.tar.gz)
+sha256sums=('fd62d3d6d8fa85145528065fabad4d7cb20f6b2201e71be4081a4e9701a5b330')
+
+build() {
+	cd "$pkgname-${pkgver/_/-}"
+  ./autogen.sh
+	./configure --prefix=/usr --with-charset=utf-8
+	# change hardcoded mecab installation path
+	sed -i 's!libexec/mecab!lib/mecab!g' config.status
+	make
+}
+
+package() {
+    cd $pkgname-${pkgver/_/-}
+    make DESTDIR="$pkgdir/" install
+}
+

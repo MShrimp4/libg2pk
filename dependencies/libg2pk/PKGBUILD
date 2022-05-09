@@ -1,0 +1,45 @@
+# Maintainer: Yongha Hwang <mshrimp@sogang.ac.kr>
+
+pkgname=libg2pk
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="C++ implementation of G2Pk"
+arch=(i686 x86_64)
+url=
+license=()
+groups=()
+depends=()
+makedepends=(git)
+provides=(${pkgname}=${pkgver})
+conflicts=()
+source=($pkgname::git+https://github.com/MShrimp4/${pkgname}.git)
+sha256sums=('SKIP')
+
+build() {
+    cd $pkgname/dict
+    mkdir -p build
+    cd build
+    cmake ..\
+    	-DCMAKE_INSTALL_PREFIX=/usr \
+    	-DCMAKE_INSTALL_LIBDIR=/usr/lib \
+    	-DCMAKE_INSTALL_LIBEXECDIR=/usr/lib
+    make
+    
+    cd $pkgname/lib
+    mkdir -p build
+    cd build
+    cmake ..\
+    	-DCMAKE_INSTALL_PREFIX=/usr \
+    	-DCMAKE_INSTALL_LIBDIR=/usr/lib \
+    	-DCMAKE_INSTALL_LIBEXECDIR=/usr/lib
+    make
+}
+
+package() {
+    cd $pkgname/dict/build
+    make DESTDIR="$pkgdir/" install
+
+    cd $pkgname/lib/build
+    make DESTDIR="$pkgdir/" install
+}
+

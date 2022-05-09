@@ -1,0 +1,46 @@
+# Maintainer: Yongha Hwang <mshrimp@sogang.ac.kr>
+
+pkgname=mecab-ko
+pkgver=0.996
+pkgrel=1
+pkgdesc="MeCab but Korean"
+arch=(i686 x86_64)
+url=https://bitbucket.org/eunjeon/${pkgname}/src/master/
+license=(BSD)
+groups=()
+depends=()
+makedepends=(git)
+provides=(${pkgname}=${pkgver})
+conflicts=(mecab)
+source=($pkgname::git+https://bitbucket.org/eunjeon/${pkgname}.git)
+sha256sums=('SKIP')
+
+prepare() {
+	cd $pkgname/
+	# change hardcodeed mecab libexecdir
+	sed -i 's!prefix@/libexec!libexecdir@!g' mecab-config.in
+}
+
+build() {
+    cd $pkgname/
+	./configure \
+      --prefix=/usr \
+      --sysconfdir=/etc \
+      --libexecdir=/usr/lib \
+      --with-charset=utf-8
+	make
+}
+
+check() {
+	cd $pkgname/
+	make -k check
+}
+
+package() {
+    cd $pkgname/
+    make DESTDIR="$pkgdir/" install
+    #mkdir -p $pkgdir/etc/ld.so.conf.d
+    #touch $pkgdir/etc/ld.so.conf.d/mecab.conf
+    #$pkgdir/usr/bin/mecab-config --libs-only-L | tee $pkgdir/etc/ld.so.conf.d/mecab.conf
+}
+

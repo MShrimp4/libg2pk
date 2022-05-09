@@ -1,0 +1,4 @@
+//
+#define libg2pk_VERSION_MAJOR @libg2pk_VERSION_MAJOR@
+#define libg2pk_VERSION_MINOR @libg2pk_VERSION_MINOR@
+#define libg2pk_LIBEXECDIR    @CMAKE_INSTALL_FULL_LIBEXECDIR@
