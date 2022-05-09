@@ -16,7 +16,7 @@ source=($pkgname::git+https://github.com/MShrimp4/${pkgname}.git)
 sha256sums=('SKIP')
 
 build() {
-    cd $pkgname/dict
+    cd $srcdir/$pkgname/dict
     mkdir -p build
     cd build
     cmake ..\
@@ -25,7 +25,8 @@ build() {
     	-DCMAKE_INSTALL_LIBEXECDIR=/usr/lib
     make
     
-    cd $pkgname/lib
+    
+    cd $srcdir/$pkgname/lib
     mkdir -p build
     cd build
     cmake ..\
@@ -36,10 +37,10 @@ build() {
 }
 
 package() {
-    cd $pkgname/dict/build
+    cd $srcdir/$pkgname/dict/build
     make DESTDIR="$pkgdir/" install
 
-    cd $pkgname/lib/build
+    cd $srcdir/$pkgname/lib/build
     make DESTDIR="$pkgdir/" install
 }
 
