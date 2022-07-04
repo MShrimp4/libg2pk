@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cctype>
 
 //I/O
@@ -9,6 +10,7 @@
 //String
 #include <locale>
 #include <codecvt>
+#include <cstring>
 #include <string>
 #include <regex>
 
@@ -176,6 +178,20 @@ G2K::annotate (const std::string str)
           pos_start = node->feature;
         else
           pos_start++;
+
+    std::cout << ' ' << node->feature
+	      << ' ' << (int)(node->surface - input)
+	      << ' ' << (int)(node->surface - input + node->length)
+	      << ' ' << node->rcAttr
+	      << ' ' << node->lcAttr
+	      << ' ' << node->posid
+	      << ' ' << (int)node->char_type
+	      << ' ' << (int)node->stat
+	      << ' ' << (int)node->isbest
+	      << ' ' << node->alpha
+	      << ' ' << node->beta
+	      << ' ' << node->prob
+	      << ' ' << node->cost << std::endl;
 
         if (strchr ("VJEB", *pos_start) != NULL)
           {
