@@ -1,14 +1,14 @@
 # Maintainer: Yongha Hwang <mshrimp@sogang.ac.kr>
 
 pkgname=libg2pk
-pkgver=1.0.0
+pkgver=1.1.0
 pkgrel=1
 pkgdesc="C++ implementation of G2Pk"
 arch=(i686 x86_64)
 url=
 license=()
 groups=()
-depends=()
+depends=(libhangul)
 makedepends=(git)
 provides=(${pkgname}=${pkgver})
 conflicts=()
