@@ -25,7 +25,8 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-using namespace G2PK;
+namespace G2PK
+{
 
 static void listener (AC_TEXT_t *text, void *user);
 static AC_TRIE_t *fill_trie (const std::string dict_dir);
@@ -454,3 +455,5 @@ G2K::to_syllables (const std::u32string& str)
 
   return output;
 }
+
+} //namespace G2PK
