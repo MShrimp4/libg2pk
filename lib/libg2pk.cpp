@@ -210,22 +210,6 @@ G2K::annotate (const std::string& str)
         else
           pos_start++;
 
-        std::cout.write (node->surface, node->length);
-
-    std::cout << ' ' << node->feature
-	      << ' ' << (int)(node->surface - input)
-	      << ' ' << (int)(node->surface - input + node->length)
-	      << ' ' << node->rcAttr
-	      << ' ' << node->lcAttr
-	      << ' ' << node->posid
-	      << ' ' << (int)node->char_type
-	      << ' ' << (int)node->stat
-	      << ' ' << (int)node->isbest
-	      << ' ' << node->alpha
-	      << ' ' << node->beta
-	      << ' ' << node->prob
-	      << ' ' << node->cost << std::endl;
-
         if (strchr ("VJEB", *pos_start) != NULL)
           {
             result.push_back ('/');
