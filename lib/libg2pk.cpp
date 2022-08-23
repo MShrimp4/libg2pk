@@ -71,6 +71,26 @@ fill_trie (const std::string dict_dir)
 
 
 
+std::string
+u32_to_u8 (const std::u32string& str)
+{
+  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_from32;
+
+  return wconv_from32.to_bytes(str.data());
+}
+
+
+
+std::u32string
+u8_to_u32 (const std::string& str)
+{
+  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_to32;
+
+  return wconv_to32.from_bytes(str.data());
+}
+
+
+
 /***********************
  * Class methods
  ***********************/
@@ -99,28 +119,37 @@ G2K::~G2K ()
 
 
 std::string
-G2K::convert (std::string input)
+G2K::convert (std::string input, bool debug)
 {
-  std::string str = input;
+  std::string& str = input;
 
   str = convert_english (str);
-  std::cout << "Covert English :" << str << std::endl;
+  if (debug)
+    std::cout << "Covert English :" << str << std::endl;
   str = parse_idioms (str);
-  std::cout << "Annotate :" << str << std::endl;
-  str = decompose (str);
-  std::cout << "Convert Numbers :" << str << std::endl;
-  str = convert_num (str);
-  std::cout << "Parse Idioms :" << str << std::endl;
+  if (debug)
+    std::cout << "Parse Idioms :" << str << std::endl;
   str = annotate (str);
-  std::cout << "Decompose :" << str << std::endl;
+  if (debug)
+    std::cout << "Annotate :" << str << std::endl;
+  str = u32_to_u8(decompose (u8_to_u32(str)));
+  if (debug)
+    std::cout << "Decompose :" << str << std::endl;
+  str = convert_num (str);
+  if (debug)
+    std::cout << "Convert Numbers :" << str << std::endl;
   str = apply_special_pronounciation_rules (str);
-  std::cout << "Apply Special :" << str << std::endl;
+  if (debug)
+    std::cout << "Apply Special :" << str << std::endl;
   str = link (str);
-  std::cout << "Batchim + Onset :" << str << std::endl;
+  if (debug)
+    std::cout << "Batchim + Onset :" << str << std::endl;
   str = batchim_onset (str);
-  std::cout << "Link :" << str << std::endl;
-  str = to_syllables (str);
-  std::cout << "To Syllables:" << str << std::endl;
+  if (debug)
+    std::cout << "Link :" << str << std::endl;
+  str = u32_to_u8 (to_syllables (u8_to_u32(str)));
+  if (debug)
+    std::cout << "To Syllables:" << str << std::endl;
   str.pop_back();
 
   return str;
@@ -129,7 +158,7 @@ G2K::convert (std::string input)
 
 
 std::string
-G2K::convert_english (const std::string str)
+G2K::convert_english (const std::string& str)
 {
   std::string input = str;
 
@@ -139,6 +168,7 @@ G2K::convert_english (const std::string str)
   AC_TEXT_t ac_input = {input.data(), input.length()};
 
   std::string output = "";
+  output.reserve(str.size());
   multifast_replace ((AC_TRIE_t *)convert_eng_trie, 
                      &ac_input, MF_REPLACE_MODE_NORMAL,
                      listener, (void *)&output);
@@ -150,7 +180,7 @@ G2K::convert_english (const std::string str)
 
 
 std::string
-G2K::annotate (const std::string str)
+G2K::annotate (const std::string& str)
 {
   const char *input = str.c_str();
   std::string result = "";
@@ -178,6 +208,8 @@ G2K::annotate (const std::string str)
           pos_start = node->feature;
         else
           pos_start++;
+
+        std::cout.write (node->surface, node->length);
 
     std::cout << ' ' << node->feature
 	      << ' ' << (int)(node->surface - input)
@@ -209,7 +241,7 @@ G2K::annotate (const std::string str)
 
 
 std::string
-G2K::convert_num (const std::string str)
+G2K::convert_num (const std::string& str)
 {
   std::string output = str;
   return output;
@@ -218,7 +250,7 @@ G2K::convert_num (const std::string str)
 
 
 std::string
-G2K::parse_idioms (const std::string str)
+G2K::parse_idioms (const std::string& str)
 {
   std::string output = str;
   return output;
@@ -226,16 +258,13 @@ G2K::parse_idioms (const std::string str)
 
 
 
-std::string
-G2K::decompose (const std::string str)
+std::u32string
+G2K::decompose (const std::u32string& str)
 {
-  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_to32;
-  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_from32;
-
-  std::u32string conv_input = wconv_to32.from_bytes(str.data());
   std::u32string output     = U"";
+  output.reserve(str.size()*3);
 
-  for (char32_t &c: conv_input)
+  for (const char32_t &c: str)
     {
       if (hangul_is_syllable ((ucschar) c))
         {
@@ -251,15 +280,13 @@ G2K::decompose (const std::string str)
           output.push_back (c);
         }
     }
-  std::string conv_output = wconv_from32.to_bytes (output.data());
-
-  return conv_output;
+  return output;
 }
 
 
 
 std::string
-G2K::apply_special_pronounciation_rules (const std::string str)
+G2K::apply_special_pronounciation_rules (const std::string& str)
 {
   static const std::array <std::array <std::string, 2>, 45> regex_str =
     {{
@@ -311,6 +338,7 @@ G2K::apply_special_pronounciation_rules (const std::string str)
       }};
 
   std::string output = str;
+  output.reserve(str.size());
 
   for (const std::array <std::string, 2> &item : regex_str)
     {
@@ -325,13 +353,14 @@ G2K::apply_special_pronounciation_rules (const std::string str)
 
 
 std::string
-G2K::batchim_onset (const std::string str)
+G2K::batchim_onset (const std::string& str)
 {
   std::string input = str;
 
   AC_TEXT_t ac_input = {input.data(), input.length()};
 
   std::string output = "";
+  output.reserve(str.size());
   multifast_replace ((AC_TRIE_t *)batchim_onset_trie, 
                      &ac_input, MF_REPLACE_MODE_NORMAL,
                      listener, (void *)&output);
@@ -343,7 +372,7 @@ G2K::batchim_onset (const std::string str)
 
 
 std::string
-G2K::link (const std::string str)
+G2K::link (const std::string& str)
 {
   static const std::array <std::array <std::string, 2>, 49> regex_str =
     {{
@@ -412,22 +441,16 @@ G2K::link (const std::string str)
 
 
 
-std::string
-G2K::to_syllables (const std::string str)
+std::u32string
+G2K::to_syllables (const std::u32string& str)
 {
-  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_to32;
-  std::wstring_convert <std::codecvt_utf8<char32_t>, char32_t> wconv_from32;
-
-  std::u32string conv_input = wconv_to32.from_bytes(str.data());
   std::u32string output     = U"";
+  output.reserve (str.size() + 10);
 
-  output.reserve (conv_input.size() + 10);
   int n = hangul_jamos_to_syllables
-    ((ucschar *) output.data(),     conv_input.size() + 10,
-     (ucschar *) conv_input.data(), conv_input.size());
+    ((ucschar *) output.data(), str.size() + 10,
+     (ucschar *) str.data(),    str.size());
   output.data()[n] = U'\0';
 
-  std::string conv_output = wconv_from32.to_bytes (output.data());
-
-  return conv_output;
+  return output;
 }

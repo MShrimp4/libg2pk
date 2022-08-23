@@ -10,10 +10,11 @@ namespace G2PK
     G2K ();
     ~G2K ();
 
-    std::string convert      (std::string input);
+    std::string    convert      (std::string input,
+                                 bool        debug = false);
 
-    std::string decompose    (const std::string str);
-    std::string to_syllables (const std::string str);
+    std::u32string decompose    (const std::u32string& str);
+    std::u32string to_syllables (const std::u32string& str);
 
   private:
 
@@ -22,15 +23,18 @@ namespace G2PK
 
     void *tagger; //MeCab::tagger
 
-    std::string convert_english                    (const std::string str);
-    std::string annotate                           (const std::string str);
-    std::string convert_num                        (const std::string str);
-    std::string parse_idioms                       (const std::string str);
-    std::string apply_special_pronounciation_rules (const std::string str);
-    std::string link                               (const std::string str);
-    std::string batchim_onset                      (const std::string str);
+    std::string convert_english                    (const std::string& str);
+    std::string annotate                           (const std::string& str);
+    std::string convert_num                        (const std::string& str);
+    std::string parse_idioms                       (const std::string& str);
+    std::string apply_special_pronounciation_rules (const std::string& str);
+    std::string link                               (const std::string& str);
+    std::string batchim_onset                      (const std::string& str);
 
   };
+
+  std::string u32_to_u8 (const std::u32string& str);
+  std::u32string u8_to_u32 (const std::string& str);
 }
 
 

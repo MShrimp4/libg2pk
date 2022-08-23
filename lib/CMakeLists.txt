@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project(g2pk VERSION 1.0.0 DESCRIPTION "C++ implementation of G2Pk")
+project(g2pk VERSION 1.1.0 DESCRIPTION "C++ implementation of G2Pk")
 include(GNUInstallDirs)#find_package(GNUInstallDirs REQUIRED)
 include(FindPkgConfig)#find_package(PkgConfig REQUIRED)
 add_library(g2pk SHARED libg2pk.cpp)
