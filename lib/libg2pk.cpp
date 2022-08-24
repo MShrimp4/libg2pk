@@ -432,15 +432,14 @@ G2K::link (const std::string& str)
 std::u32string
 G2K::to_syllables (const std::u32string& str)
 {
-  std::u32string output     = U"";
-  output.reserve (str.size() + 10);
+  char32_t output [str.size() + 10];
 
   int n = hangul_jamos_to_syllables
-    ((ucschar *) output.data(), str.size() + 10,
+    ((ucschar *) output, str.size() + 10,
      (ucschar *) str.data(),    str.size());
-  output.data()[n] = U'\0';
+  output[n] = U'\0';
 
-  return output;
+  return std::u32string(output);
 }
 
 } //namespace G2PK
