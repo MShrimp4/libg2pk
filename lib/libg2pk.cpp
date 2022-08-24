@@ -106,6 +106,9 @@ G2K::G2K ()
   convert_eng_trie   = (void *) fill_trie (libexecdir / english);
   batchim_onset_trie = (void *) fill_trie (libexecdir / batchim);
   tagger = (void *) MeCab::createTagger("");
+
+  if (!convert_eng_trie || !batchim_onset_trie || !tagger)
+    throw std::runtime_error("G2Pk init failed\n");
 }
 
 
